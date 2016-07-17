@@ -147,9 +147,9 @@ class average_pooling_layer : public partial_connected_layer<Activation> {
           stride_width_(stride.first),
           stride_height_(stride.second),
           in_(in_width, in_height, in_channels),
-          out_(pool_out_dim(in_width, pooling_size, stride),
-               pool_out_dim(in_height, pooling_size, stride), in_channels),
-          w_(pooling_size, pooling_size, in_channels) {
+          out_(pool_out_dim(in_width, pooling_size.first, stride.first),
+               pool_out_dim(in_height, pooling_size.second, stride.second), in_channels),
+          w_(pooling_size.first, pooling_size.second, in_channels) {
         if ((in_width % pooling_size.first)) {
             pooling_size_mismatch(in_width, in_height, pooling_size.first);
         }
@@ -186,8 +186,8 @@ class average_pooling_layer : public partial_connected_layer<Activation> {
 
     void init_connection(cnn_size_t pooling_size_width, cnn_size_t pooling_size_height) {
         for (cnn_size_t c = 0; c < in_.depth_; ++c) {
-            for (cnn_size_t y = 0; y < in_.height_ - pooling_size_height + 1; y += stride_width_) {
-                for (cnn_size_t x = 0; x < in_.width_ - pooling_size_width + 1; x += stride_height_) {
+            for (cnn_size_t y = 0; y < in_.height_ - pooling_size_height + 1; y += stride_height_) {
+                for (cnn_size_t x = 0; x < in_.width_ - pooling_size_width + 1; x += stride_width_) {
                     connect_kernel(pooling_size_width, pooling_size_height, x, y, c);
                 }
             }
